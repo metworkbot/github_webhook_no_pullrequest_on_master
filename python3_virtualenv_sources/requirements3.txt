@@ -1,0 +1,1 @@
+-e git+https://github.com/metwork-framework/aiohttp_github_helpers.git@f0c976c753f67bab9af438cf5d8eea1aec0975fd#egg=aiohttp_github_helpers
