@@ -102,3 +102,7 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+python3_virtualenv_sources/requirements3.txt
+python3_virtualenv_sources/src
+local
