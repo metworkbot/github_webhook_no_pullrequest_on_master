@@ -55,7 +55,7 @@ async def handle(request):
     body = await request.read()
     decoded_body = json.loads(body.decode('utf8'))
     action = decoded_body['action']
-    if action not in ('opened', 'edited'):
+    if action not in ('opened', 'edited', 'synchronize'):
         LOGGER.info("ignoring action: %s" % action)
         return web.Response(text="Done")
     pr = decoded_body['pull_request']
@@ -74,15 +74,11 @@ async def handle(request):
         comment = COMMENT2
     if comment and status_state:
         async with ClientSession(auth=AUTH, timeout=TIMEOUT) as session:
-            topics = h.add github_get_repo_topics(session, owner, repo)
-            if ('integration-level-4' not in topics) and \
-                    ('integration-level-5' not in topics):
-                LOGGER.info("ignoring %s/%s repo because of its "
-                            "integration level" % (owner, repo))
             await h.github_create_status(session, owner, repo, head_sha,
                                          status_state, **STATUS_KWARGS)
-            await h.github_post_comment(session, owner, repo, issue_number,
-                                        comment)
+            if action in ('opened', 'edited'):
+                await h.github_post_comment(session, owner, repo, issue_number,
+                                            comment)
     return web.Response(text="Done")
 
 check_signature_middleware = \
